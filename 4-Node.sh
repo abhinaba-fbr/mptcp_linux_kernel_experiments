@@ -28,8 +28,6 @@ ip netns exec h1 sysctl -w net.mptcp.enabled=1
 ip netns exec h1 sysctl -w net.mptcp.allow_join_initial_addr_port=1
 ip netns exec h2 sysctl -w net.mptcp.allow_join_initial_addr_port=1
 
-# ip netns exec h1 sysctl -w net.mptcp.mptcp_path_manager='fullmesh'
-
 #Create two virtual ethernet (veth) pairs
 ip link add eth1a netns h1 type veth peer eth1b netns r1
 ip link add eth2a netns h1 type veth peer eth2b netns r2
@@ -85,9 +83,9 @@ ip -n h1 mptcp limits set subflow 2 add_addr_accepted 2
 ip -n h2 mptcp endpoint flush
 ip -n h2 mptcp limits set subflow 2 add_addr_accepted 2
 
-# Can change these parameters for adjust who initiates the join subflow
-ip -n h2 mptcp endpoint add 10.0.1.2 dev eth3b id 1 signal
-# ip -n h1 mptcp endpoint add 192.168.0.1 dev eth2a id 1 subflow
+# Path Management 'in-kernel' using ip mptcp
+ip -n h2 mptcp endpoint add 192.168.1.2 dev eth4b id 1 signal
+ip -n h1 mptcp endpoint add 192.168.0.1 dev eth2a id 1 fullmesh
 
 # Enable IP forwarding
 ip netns exec r1 sysctl -w net.ipv4.ip_forward=1
@@ -116,15 +114,7 @@ ip netns exec h2 ip route add default via  10.0.1.1 dev eth3b table 3
 ip netns exec h2 ip route add 192.168.1.0/24 dev eth4b scope link table 4
 ip netns exec h2 ip route add default via 192.168.1.1 dev eth4b table 4
 
-
 # Global Default route for h1 and h2
-ip netns exec h1 ip route add default scope global nexthop via 192.168.0.2 dev eth2a
+ip netns exec h1 ip route add default scope global nexthop via 10.0.0.2 dev eth1a
 ip netns exec h2 ip route add default scope global nexthop via 192.168.1.1 dev eth4b
 
-# Do we really need this? (Open question) 
-# # Adding extra route for r1 and r2
-# ip netns exec r2 ip route add default via 192.168.1.2 dev eth4a
-# ip netns exec r1 ip route add default via 10.0.1.2 dev eth3a
-
-# ip netns exec r1 ip route add 192.168.0.0/24 dev eth1b scope link
-# ip netns exec r2 ip route add 10.0.0.0/24 dev eth2b scope link

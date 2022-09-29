@@ -68,8 +68,7 @@ ip -n h1 mptcp limits set subflow 2 add_addr_accepted 2
 ip -n h3 mptcp endpoint flush
 ip -n h3 mptcp limits set subflow 2 add_addr_accepted 2
 
-# Can change these parameters for adjust who initiates the join subflow
-#ip -n h2 mptcp endpoint add 192.168.0.2 dev eth2b id 1 subflow
+# Path Management 'in-kernel' using ip mptcp
 ip -n h1 mptcp endpoint add 192.168.0.1 dev eth1b id 1 subflow
 
 # Enable IP forwarding

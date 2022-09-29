@@ -25,7 +25,7 @@ ip netns exec h1 sysctl -w net.mptcp.checksum_enabled=1
 ip netns exec h2 sysctl -w net.mptcp.checksum_enabled=1
 
 # Configuring C flag
-ip netns exec h2 sysctl -w net.mptcp.allow_join_initial_addr_port=1;
+ip netns exec h2 sysctl -w net.mptcp.checksum_enabled=1;
 
 #Create two virtual ethernet (veth) pairs between h1 and h2
 ip link add eth1a netns h1 type veth peer eth2a netns h2
@@ -60,7 +60,7 @@ ip -n h1 mptcp limits set subflow 1 add_addr_accepted 1
 ip -n h2 mptcp endpoint flush
 ip -n h2 mptcp limits set subflow 1 add_addr_accepted 1
 
-# Can change these parameters for adjust who initiates the join subflow
+# Path Management 'in-kernel' using ip mptcp
 ip -n h1 mptcp endpoint add 192.168.0.1 dev eth1b id 1 subflow
 # ip -n h2 mptcp endpoint add 192.168.0.2 dev eth2b id 1 signal
 # ip -n h2 mptcp endpoint add 192.168.0.2 dev eth2b id 1 subflow

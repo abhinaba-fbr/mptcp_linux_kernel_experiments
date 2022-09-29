@@ -85,14 +85,12 @@ ip -n h2 link set eth4b up
 
 # Define subflows for MPTCP
 ip -n h1 mptcp endpoint flush
-ip -n h1 mptcp limits set subflow 2 add_addr_accepted 2
+ip -n h1 mptcp limits set subflow 1 add_addr_accepted 1
 
 ip -n h2 mptcp endpoint flush
-ip -n h2 mptcp limits set subflow 2 add_addr_accepted 2
+ip -n h2 mptcp limits set subflow 1 add_addr_accepted 1
 
-# Can change these parameters for adjust who initiates the join subflow
-# ip -n h2 mptcp endpoint add 192.168.1.2 dev eth4b id 1 signal
-# ip -n h1 mptcp endpoint add 192.168.0.1 dev eth2a id 2 signal
+# Path Management 'in-kernel' using ip mptcp
 ip -n h1 mptcp endpoint add 192.168.0.1 dev eth2a id 1 subflow
 
 # Enable IP forwarding
